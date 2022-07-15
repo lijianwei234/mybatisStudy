@@ -1,5 +1,6 @@
 package com.example.config;
 
+import com.example.io.Resources;
 import com.example.pojo.Configuration;
 import com.mchange.v2.c3p0.ComboPooledDataSource;
 import org.dom4j.Document;
@@ -46,11 +47,18 @@ public class XMLConfigBuilder {
         comboPooledDataSource.setJdbcUrl(properties.getProperty("jdbcUrl"));
         comboPooledDataSource.setUser(properties.getProperty("username"));
         comboPooledDataSource.setPassword(properties.getProperty("password"));
-
         configuration.setDataSource(comboPooledDataSource);
 
 
         //mapper.xml的解析
+        List<Element> mapperList = rootElement.selectNodes("//mapper");
+        for (Element element : mapperList) {
+            String mapperPath = element.attributeValue("resource");
+            InputStream resourceAsStream = Resources.getResourceAsStream(mapperPath);
+
+            XMLMapperBuilder xmlMapperBuilder = new XMLMapperBuilder(configuration);
+            xmlMapperBuilder.parse(resourceAsStream);
+        }
 
         return null;
     }
