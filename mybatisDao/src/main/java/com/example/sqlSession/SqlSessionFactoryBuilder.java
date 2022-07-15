@@ -19,7 +19,9 @@ public class SqlSessionFactoryBuilder {
         XMLConfigBuilder xmlConfigBuilder = new XMLConfigBuilder();
         Configuration configuration = xmlConfigBuilder.parseConfig(in);
 
-
+        //创建sqlSessionFactory
+        SqlSessionFactory sqlSessionFactory = new DefaultSqlSessionFactory(configuration);
+        return sqlSessionFactory;
     }
 
 }

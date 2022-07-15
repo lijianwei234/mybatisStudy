@@ -1,5 +1,6 @@
 package com.example.io;
 
+import com.example.sqlSession.SqlSession;
 import com.example.sqlSession.SqlSessionFactory;
 import com.example.sqlSession.SqlSessionFactoryBuilder;
 import org.dom4j.DocumentException;
@@ -14,6 +15,9 @@ public class mybatisTest {
     public void test() throws PropertyVetoException, DocumentException {
         InputStream resourceAsStream = Resources.getResourceAsStream("sqlMapConfig.xml");
         SqlSessionFactory sqlSessionFactory = new SqlSessionFactoryBuilder().build(resourceAsStream);
+        SqlSession sqlSession = sqlSessionFactory.openSession();
+
+        
     }
 
 }
