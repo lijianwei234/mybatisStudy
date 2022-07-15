@@ -9,6 +9,10 @@ public interface SqlSession {
     public <E> List<E> selectList(String statementId, Object... params) throws SQLException, Exception;
 
     //查询指定条件的数据
-    public <T> T selectOne(String statementId, Object... params) throws SQLException;
+    public <T> T selectOne(String statementId, Object... params) throws SQLException, Exception;
+
+
+    //为dao层生成代理类
+    public <T> T getMapper(Class<?> mapperClass);
 
 }

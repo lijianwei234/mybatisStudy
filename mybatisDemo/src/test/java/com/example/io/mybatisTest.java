@@ -1,6 +1,7 @@
 package com.example.io;
 
 import com.example.pojo.User;
+import com.example.pojo.dao.UserDao;
 import com.example.sqlSession.SqlSession;
 import com.example.sqlSession.SqlSessionFactory;
 import com.example.sqlSession.SqlSessionFactoryBuilder;
@@ -26,6 +27,9 @@ public class mybatisTest {
 
         List<User> users = sqlSession.selectList("user.selectList");
         System.out.println(users);
+
+        UserDao userDao = sqlSession.getMapper(UserDao.class);
+        userDao.findAll();
     }
 
 }
