@@ -1,5 +1,6 @@
 package com.example.io;
 
+import com.example.pojo.User;
 import com.example.sqlSession.SqlSession;
 import com.example.sqlSession.SqlSessionFactory;
 import com.example.sqlSession.SqlSessionFactoryBuilder;
@@ -17,7 +18,10 @@ public class mybatisTest {
         SqlSessionFactory sqlSessionFactory = new SqlSessionFactoryBuilder().build(resourceAsStream);
         SqlSession sqlSession = sqlSessionFactory.openSession();
 
-        
+        User user = new User();
+        user.setId(1);
+        user.setUsername("张三");
+        User user1 = sqlSession.selectOne("user.selectOne", user);
     }
 
 }
