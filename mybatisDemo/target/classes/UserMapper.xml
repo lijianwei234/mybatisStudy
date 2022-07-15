@@ -1,9 +1,0 @@
-<mapper namespace="user">
-    <select id="selectList" resultType="com.example.pojo.User">
-        select * from user
-    </select>
-
-    <select id="selectOne" resultType="com.example.pojo.User" paramterType="com.example.pojo.User">
-        select * from user where username=#{username} and id=#{id}
-    </select>
-</mapper>
