@@ -15,7 +15,7 @@ public class DefaultSqlSession implements SqlSession{
     }
 
     @Override
-    public <E> List<E> selectList(String statementId, Object... params) throws SQLException {
+    public <E> List<E> selectList(String statementId, Object... params) throws Exception {
         SimpleExecutor simpleExecutor = new SimpleExecutor();
         MappedStatement mappedStatement = configuration.getMappedStatementMap().get(statementId);
         List<Object> query = simpleExecutor.query(configuration, mappedStatement, params);
@@ -23,7 +23,7 @@ public class DefaultSqlSession implements SqlSession{
     }
 
     @Override
-    public <T> T selectOne(String statementId, Object... params) throws SQLException {
+    public <T> T selectOne(String statementId, Object... params) throws Exception {
         List<Object> objects = selectList(statementId, params);
         if (objects.size() == 1) {
             return (T) objects.get(0);

@@ -9,11 +9,12 @@ import org.junit.Test;
 
 import java.beans.PropertyVetoException;
 import java.io.InputStream;
+import java.util.List;
 
 public class mybatisTest {
 
     @Test
-    public void test() throws PropertyVetoException, DocumentException {
+    public void test() throws Exception {
         InputStream resourceAsStream = Resources.getResourceAsStream("sqlMapConfig.xml");
         SqlSessionFactory sqlSessionFactory = new SqlSessionFactoryBuilder().build(resourceAsStream);
         SqlSession sqlSession = sqlSessionFactory.openSession();
@@ -22,6 +23,9 @@ public class mybatisTest {
         user.setId(1);
         user.setUsername("张三");
         User user1 = sqlSession.selectOne("user.selectOne", user);
+
+        List<User> users = sqlSession.selectList("user.selectList");
+        System.out.println(users);
     }
 
 }

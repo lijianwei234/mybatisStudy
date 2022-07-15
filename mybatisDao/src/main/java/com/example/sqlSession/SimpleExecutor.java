@@ -8,15 +8,16 @@ import com.example.utils.ParameterMapping;
 import com.example.utils.ParameterMappingTokenHandler;
 import com.example.utils.TokenHandler;
 
+import java.beans.PropertyDescriptor;
 import java.lang.reflect.Field;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
+import java.lang.reflect.Method;
+import java.sql.*;
+import java.util.ArrayList;
 import java.util.List;
 
 public class SimpleExecutor implements Executor{
     @Override
-    public <E> List<E> query(Configuration configuration, MappedStatement mappedStatement, Object... params) throws SQLException {
+    public <E> List<E> query(Configuration configuration, MappedStatement mappedStatement, Object... params) throws Exception {
         //获取链接
         Connection connection = configuration.getDataSource().getConnection();
 
@@ -33,31 +34,45 @@ public class SimpleExecutor implements Executor{
 
         List<ParameterMapping> parameterMappingList = boundSql.getParameterMappingList();
         for (int i = 0; i < parameterMappingList.size(); i++) {
-            ParameterMapping parameterMapping = parameterMappingList.get(0);
+            ParameterMapping parameterMapping = parameterMappingList.get(i);
             String content = parameterMapping.getContent();
 
             //反射
-            Field field = null;
-            try {
-                field = parameterClassType.getDeclaredField(content);
-            } catch (NoSuchFieldException e) {
-                e.printStackTrace();
-            }
+            Field field  = parameterClassType.getDeclaredField(content);
             field.setAccessible(true);
-            Object o = null;
-            try {
-                o = field.get(params[0]);
-            } catch (IllegalAccessException e) {
-                e.printStackTrace();
-            }
+            Object o = field.get(params[0]);
+
 
             preparedStatement.setObject(i+1, o);
         }
 
         //执行sql
+        ResultSet resultSet = preparedStatement.executeQuery();
+        String resultType = mappedStatement.getResultType();
+        Class<?> resultTypeClass = getClassType(resultType);
+
+        ArrayList<Object> objects = new ArrayList<>();
 
         //封装返回结果集
-        return null;
+        while (resultSet.next()) {
+            Object o = resultTypeClass.newInstance();
+
+            ResultSetMetaData metaData = resultSet.getMetaData();
+            for (int i = 1; i <= metaData.getColumnCount(); i++) {
+                //字段名
+                String columnName = metaData.getColumnName(i);
+
+                //字段值
+                Object value = resultSet.getObject(columnName);
+
+                //使用内省，将具体的值封装到对象里面
+                PropertyDescriptor propertyDescriptor = new PropertyDescriptor(columnName, resultTypeClass);
+                Method writeMethod = propertyDescriptor.getWriteMethod();
+                writeMethod.invoke(o, value);
+            }
+            objects.add(o);
+        }
+        return (List<E>) objects;
     }
 
     private Class<?> getClassType(String paramterType) {

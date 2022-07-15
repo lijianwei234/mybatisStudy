@@ -1,7 +1,7 @@
 <configuration>
     <datasource>
         <property name="driverClass" value="com.mysql.jdbc.Driver"></property>
-        <property name="jdbcUrl" value="jdbc:mysql://zdy_mybatis?useUnicode=true&amp;characterEncoding=utf8"></property>
+        <property name="jdbcUrl" value="jdbc:mysql:///zdy_mybatis?useUnicode=true&amp;characterEncoding=utf8"></property>
         <property name="username" value="root"></property>
         <property name="password" value=""></property>
     </datasource>
