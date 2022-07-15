@@ -8,6 +8,7 @@ import com.example.utils.ParameterMapping;
 import com.example.utils.ParameterMappingTokenHandler;
 import com.example.utils.TokenHandler;
 
+import java.lang.reflect.Field;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
@@ -27,10 +28,49 @@ public class SimpleExecutor implements Executor{
         PreparedStatement preparedStatement = connection.prepareStatement(boundSql.getSqlText());
 
         //设置参数
+        String paramterType = mappedStatement.getParamterType();
+        Class<?> parameterClassType = getClassType(paramterType);
+
+        List<ParameterMapping> parameterMappingList = boundSql.getParameterMappingList();
+        for (int i = 0; i < parameterMappingList.size(); i++) {
+            ParameterMapping parameterMapping = parameterMappingList.get(0);
+            String content = parameterMapping.getContent();
+
+            //反射
+            Field field = null;
+            try {
+                field = parameterClassType.getDeclaredField(content);
+            } catch (NoSuchFieldException e) {
+                e.printStackTrace();
+            }
+            field.setAccessible(true);
+            Object o = null;
+            try {
+                o = field.get(params[0]);
+            } catch (IllegalAccessException e) {
+                e.printStackTrace();
+            }
+
+            preparedStatement.setObject(i+1, o);
+        }
 
         //执行sql
 
         //封装返回结果集
+        return null;
+    }
+
+    private Class<?> getClassType(String paramterType) {
+
+        if (paramterType != null) {
+            Class<?> aClass = null;
+            try {
+                aClass = Class.forName(paramterType);
+            } catch (ClassNotFoundException e) {
+                e.printStackTrace();
+            }
+            return aClass;
+        }
         return null;
     }
 
